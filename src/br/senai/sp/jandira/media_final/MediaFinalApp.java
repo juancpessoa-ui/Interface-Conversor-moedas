@@ -1,14 +1,15 @@
 package br.senai.sp.jandira.media_final;
 
+import com.sun.javafx.geom.BaseBounds;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class MediaFinalApp extends Application {
 
@@ -39,10 +40,10 @@ public class MediaFinalApp extends Application {
 
         //Painel de Resultados - Parte de Baixo
         VBox painelResultado = new VBox();
-        Label labelAluno = new Label("Nome do Aluno: ");
+        Label labelAlunoResultado = new Label("Nome do Aluno: ");
         Label labelMediaFinal = new Label("Media Final: ");
         Label labelSituaçao= new Label("Situação: ");
-        painelResultado.getChildren().addAll(labelAluno,labelMediaFinal,labelSituaçao);
+        painelResultado.getChildren().addAll(labelAlunoResultado,labelMediaFinal,labelSituaçao);
         painelResultado.setPadding(new Insets(0,0,10,10));
 
         Scene scene = new Scene(root);
@@ -80,7 +81,7 @@ public class MediaFinalApp extends Application {
         painelFormulario.setPadding(new Insets(0,0,10,10));
 
          painelFormulario.getChildren().addAll(
-                labelAluno, textFieldNome,
+                labelNome, textFieldNome,
                 labelNota1, textFieldNota1,
                 labelNota2, textFieldNota2,
                 labelNota3, textFieldNota3,
@@ -96,7 +97,80 @@ public class MediaFinalApp extends Application {
         stage.show();
 
         //Eventos de Cliques dos Botoes
-        buttonCalcularMedia.addEventHandler();
+        buttonCalcularMedia.setOnAction(click ->{
+            System.out.println(" Botão clicado");
+            String nomeDigitado = textFieldNome.getText();
+            labelAlunoResultado.setText("Nome do Aluno: "+  nomeDigitado);
+
+
+
+            //Calcular Media
+            //Obter Notas
+
+            //Criar Um Vetor [] de notas (array)
+            double[] notas = new double[4];
+            String[] notasStr = new String[4];
+
+            notasStr[0] = textFieldNota1.getText();
+            notas[0] = Double.parseDouble(notasStr[0]);
+
+            notasStr[1] = textFieldNota2.getText();
+            notas[1] = Double.parseDouble(notasStr[1]);
+
+            notasStr[2] = textFieldNota3.getText();
+            notas[2] = Double.parseDouble(notasStr[2]);
+
+             notasStr[3] = textFieldNota4.getText();
+             notas[3] = Double.parseDouble(notasStr[3]);
+
+             // USO DE LOOP USANDO WHILE ( ENQUANTO)
+            int i = 0;
+            double mediaFinal = 0.0;
+            while (i < notas.length) {
+                mediaFinal = mediaFinal + notas[i];
+                i = i + 1;
+            }
+            mediaFinal = mediaFinal / notas.length;
+            String mediaFinalstr=String.format("%.1f", mediaFinal);
+
+            labelMediaFinal.setText("Media Final: "+  mediaFinalstr);
+
+            //Aprovado ou Reprovado
+            String resultado;
+            if (mediaFinal >= 6.0) {
+                resultado = "Aprovado(a)";
+            } else if (mediaFinal < 4) {
+                resultado = "Reprovado(a)";
+            } else{
+                resultado = "Recuperação(a)";
+            }
+
+            labelSituaçao.setText("Situação: " + resultado);
+        });
+
+        //Botão Limpar
+        buttonLimpar.setOnAction(click->{
+            textFieldNome.clear();
+            textFieldNota1.setText("");
+            textFieldNota2.setText("");
+            textFieldNota3.setText("");
+            textFieldNota4.setText("");
+            labelMediaFinal.setText("Media Final: ");
+            labelAlunoResultado.setText("Situação: ");
+            labelSituaçao.setText("Situação: ");
+            textFieldNome.requestFocus();
+
+        });
+        //Botão Sair
+        buttonSair.setOnAction(click ->{
+            Alert alerta = new Alert(Alert.AlertType.CONFIRMATION, "Fechar Aplicação", ButtonType.YES,ButtonType.NO);
+            Optional<ButtonType> botaoPrecionado = alerta.showAndWait();
+
+            if (botaoPrecionado.get() == ButtonType.YES){
+                System.exit(0);
+            }
+
+        });
 
     }
 }
